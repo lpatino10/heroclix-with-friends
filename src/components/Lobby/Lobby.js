@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import firebase from '../../firebase';
+import firebase from '../../firebase/firebase';
 import {
   GAMES_COLLECTION,
   PLAYERS_COLLECTION,
-} from '../../db-constants';
+} from '../../firebase/constants';
 
 const getUsername = async (userId) => {
   const player = await firebase.firestore()
@@ -35,9 +35,20 @@ export const Lobby = ({ currentUserId }) => {
   }, [gameId]);
 
   useEffect(() => {
+    // Capture addition of new players.
+    firebase.firestore()
+      .collection(GAMES_COLLECTION)
+      .doc(gameId)
+      .onSnapshot(snapshot => {
+        if (snapshot.exists && snapshot.get('players').length !== players.length) {
+          setPlayers(snapshot.get('players'));
+        }
+      });
+  });
+
+  useEffect(() => {
     const usernamesPromise = Promise.all(players.map(async (player) => {
       const username = await getUsername(player);
-      console.log('username', username);
       return username;
     }));
 
@@ -52,7 +63,7 @@ export const Lobby = ({ currentUserId }) => {
       <p>{`Share the code ${joinId} with your friends to have them join the game!`}</p>
       <p>Players:</p>
       <ul>
-      {usernames.map((username) => <li>{username}</li>)}
+      {usernames.map((username, i) => <li key={players[i]}>{username}</li>)}
       </ul>
     </>
   );
