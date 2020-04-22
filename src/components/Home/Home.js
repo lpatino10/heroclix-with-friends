@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import PropTypes from 'prop-types';
 import { useHistory } from 'react-router-dom';
 import {
   createPlayer,
@@ -21,13 +22,11 @@ export const Home = ({ onSubmitUsername }) => {
   return (
     <>
       <h2>Home</h2>
-      <label htmlFor="name">Username:</label>
-      <input
-        type="text"
-        id="name"
-        onInput={(e) => setName(e.target.value)}
-      />
-      <button 
+      <label htmlFor="name">
+        Username:
+        <input type="text" id="name" onInput={(e) => setName(e.target.value)} />
+      </label>
+      <button
         type="button"
         disabled={name.length === 0}
         onClick={async () => {
@@ -39,13 +38,11 @@ export const Home = ({ onSubmitUsername }) => {
         Create game
       </button>
       <p>or</p>
-      <label htmlFor="join">Enter code to join a game:</label>
-      <input
-        type="text"
-        id="join"
-        onInput={(e) => setJoinId(e.target.value)}
-      />
-      <button 
+      <label htmlFor="join">
+        Enter code to join a game:
+        <input type="text" id="join" onInput={(e) => setJoinId(e.target.value)} />
+      </label>
+      <button
         type="button"
         disabled={name.length === 0 || joinId.length === 0}
         onClick={async () => {
@@ -63,4 +60,12 @@ export const Home = ({ onSubmitUsername }) => {
       </button>
     </>
   );
-}
+};
+
+Home.propTypes = {
+  onSubmitUsername: PropTypes.func,
+};
+
+Home.defaultProps = {
+  onSubmitUsername: () => {},
+};
