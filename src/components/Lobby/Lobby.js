@@ -1,21 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import firebase from '../../firebase/firebase';
-import {
-  GAMES_COLLECTION,
-  PLAYERS_COLLECTION,
-} from '../../firebase/constants';
+import { GAMES_COLLECTION, PLAYERS_COLLECTION } from '../../firebase/constants';
 
 const getUsername = async (userId) => {
-  const player = await firebase.firestore()
-    .collection(PLAYERS_COLLECTION)
-    .doc(userId)
-    .get();
+  const player = await firebase.firestore().collection(PLAYERS_COLLECTION).doc(userId).get();
   return player.get('username');
 };
 
-export const Lobby = ({ currentUserId }) => {
-  let { gameId } = useParams();
+export const Lobby = () => {
+  const { gameId } = useParams();
 
   const [joinId, setJoinId] = useState('');
   const [players, setPlayers] = useState([]);
@@ -23,10 +17,7 @@ export const Lobby = ({ currentUserId }) => {
 
   useEffect(() => {
     const getGameInfo = async () => {
-      const gameInfo = await firebase.firestore()
-      .collection(GAMES_COLLECTION)
-      .doc(gameId)
-      .get();
+      const gameInfo = await firebase.firestore().collection(GAMES_COLLECTION).doc(gameId).get();
       setJoinId(gameInfo.get('joinId'));
       setPlayers(gameInfo.get('players'));
     };
@@ -36,10 +27,11 @@ export const Lobby = ({ currentUserId }) => {
 
   useEffect(() => {
     // Capture addition of new players.
-    firebase.firestore()
+    firebase
+      .firestore()
       .collection(GAMES_COLLECTION)
       .doc(gameId)
-      .onSnapshot(snapshot => {
+      .onSnapshot((snapshot) => {
         if (snapshot.exists && snapshot.get('players').length !== players.length) {
           setPlayers(snapshot.get('players'));
         }
@@ -47,13 +39,15 @@ export const Lobby = ({ currentUserId }) => {
   });
 
   useEffect(() => {
-    const usernamesPromise = Promise.all(players.map(async (player) => {
-      const username = await getUsername(player);
-      return username;
-    }));
+    const usernamesPromise = Promise.all(
+      players.map(async (player) => {
+        const username = await getUsername(player);
+        return username;
+      })
+    );
 
-    usernamesPromise.then((usernames) => {
-      setUsernames(usernames)
+    usernamesPromise.then((fetchedUsernames) => {
+      setUsernames(fetchedUsernames);
     });
   }, [players]);
 
@@ -63,8 +57,10 @@ export const Lobby = ({ currentUserId }) => {
       <p>{`Share the code ${joinId} with your friends to have them join the game!`}</p>
       <p>Players:</p>
       <ul>
-      {usernames.map((username, i) => <li key={players[i]}>{username}</li>)}
+        {usernames.map((username, i) => (
+          <li key={players[i]}>{username}</li>
+        ))}
       </ul>
     </>
   );
-}
+};

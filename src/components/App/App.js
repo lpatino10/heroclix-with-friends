@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-} from 'react-router-dom';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 
-import { Home } from './Home/Home';
-import { Lobby } from './Lobby/Lobby';
-import { Play } from './Play/Play';
+import { Home } from '../Home/Home';
+import { Lobby } from '../Lobby/Lobby';
+import { Play } from '../Play/Play';
 
 export default function App() {
   const [currentUserId, setCurrentUserId] = useState();
@@ -23,7 +19,7 @@ export default function App() {
             <Play />
           </Route>
           <Route path="/">
-            <Home onSubmitUsername={setCurrentUserId}/>
+            <Home onSubmitUsername={setCurrentUserId} />
           </Route>
         </Switch>
       </div>
