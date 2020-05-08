@@ -1,5 +1,10 @@
 import firebase from './firebase';
-import { PLAYERS_COLLECTION, GAMES_COLLECTION, JOIN_ID_TO_GAME_ID_COLLECTION } from './constants';
+import {
+  PLAYERS_COLLECTION,
+  GAMES_COLLECTION,
+  JOIN_ID_TO_GAME_ID_COLLECTION,
+  PIECES_COLLECTION,
+} from './constants';
 
 const createGameId = () => {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
@@ -26,6 +31,7 @@ export const createGame = (creatorId) => {
     .set({
       joinId,
       players: [creatorId],
+      maxBuildValue: 300,
     });
 
   firebase.firestore().collection(JOIN_ID_TO_GAME_ID_COLLECTION).doc(joinId).set({ gameId });
@@ -53,4 +59,25 @@ export const addPlayerToGame = async (username, gameId) => {
     .update({
       players: firebase.firestore.FieldValue.arrayUnion(playerRef.id),
     });
+};
+
+export const getPieces = async () => {
+  const pieces = await firebase.firestore().collection(PIECES_COLLECTION).get();
+  return pieces.docs;
+};
+
+export const updateMaxBuildValue = (gameId, maxBuildValue) => {
+  firebase.firestore().collection(GAMES_COLLECTION).doc(gameId).update({
+    maxBuildValue,
+  });
+};
+
+export const setTeamForPlayer = (playerId, teamIds) => {
+  firebase.firestore().collection(PLAYERS_COLLECTION).doc(playerId).update({
+    team: teamIds,
+  });
+};
+
+export const deleteJoinIdConnection = (joinId) => {
+  firebase.firestore().collection(JOIN_ID_TO_GAME_ID_COLLECTION).doc(joinId).delete();
 };
