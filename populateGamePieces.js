@@ -1,5 +1,7 @@
+const firebase = require('firebase');
 const fetch = require('node-fetch');
 const { parse } = require('node-html-parser');
+const credentials = require('./src/firebase/.credentials.json');
 
 function parseName(metadataText) {
   // The first bold tags contain the name.
@@ -112,7 +114,21 @@ async function parseSeries(seriesCode, maxPieceId) {
 
   let seriesPieces = await Promise.all(pieceResults);
   seriesPieces = seriesPieces.filter((piece) => piece);
-  console.log(JSON.stringify(seriesPieces, null, 2));
+
+  return seriesPieces;
 }
 
-parseSeries('asm', 20);
+async function populatePieces() {
+  firebase.initializeApp(credentials);
+  const db = firebase.firestore();
+
+  // CHANGE BELOW TO GET DIFFERENT PIECES!
+  const seriesPieces = await parseSeries('', 0);
+
+  seriesPieces.forEach((piece) => {
+    console.log(`Adding ${piece.name} to DB...`);
+    db.collection('pieces').add(piece);
+  });
+}
+
+populatePieces();
