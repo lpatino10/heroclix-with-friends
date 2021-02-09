@@ -1,0 +1,14 @@
+.board {
+  display: flex;
+  flex-direction: column;
+}
+
+.cell {
+  border: 1px solid black;
+  height: 2rem;
+  width: 2rem;
+}
+
+.row {
+  display: flex;
+}
