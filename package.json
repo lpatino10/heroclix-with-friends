@@ -1,6 +1,6 @@
 {
   "name": "heroclix-with-friends",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^4.2.4",
@@ -22,7 +22,7 @@
     "eject": "react-scripts eject",
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
-    "prepare-release": "standard-version -t '' && git add CHANGELOG.md"
+    "prepare-release": "standard-version --no-verify -t '' && git add CHANGELOG.md"
   },
   "husky": {
     "hooks": {
